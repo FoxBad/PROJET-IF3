@@ -20,7 +20,7 @@ try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $db_password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
-    $stmt = $conn->prepare("SELECT created_at FROM users WHERE id = :id LIMIT 1");
+    $stmt = $conn->prepare("SELECT created_at FROM user WHERE id = :id LIMIT 1");
     $stmt->bindParam(':id', $_SESSION['user_id'], PDO::PARAM_INT);
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -39,6 +39,7 @@ try {
 
     <link rel="stylesheet" href="theo_css.css">
     <style>
+
         .dashboard-container {
             max-width: 1200px;
             margin: 2rem auto;

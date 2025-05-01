@@ -32,7 +32,7 @@ try {
     $conn->exec("SET NAMES utf8mb4");
     
     // Vérification existence email
-    $stmt = $conn->prepare("SELECT id FROM users WHERE email = :email LIMIT 1");
+    $stmt = $conn->prepare("SELECT id FROM user WHERE email = :email LIMIT 1");
     $stmt->bindParam(':email', $email, PDO::PARAM_STR);
     $stmt->execute();
     
@@ -45,7 +45,7 @@ try {
     $password_hash = password_hash($pass, PASSWORD_BCRYPT, ['cost' => 12]);
     
     // Insertion utilisateur
-    $stmt = $conn->prepare("INSERT INTO users (email, password, created_at) VALUES (:email, :password, NOW())");
+    $stmt = $conn->prepare("INSERT INTO user (email, password, created_at) VALUES (:email, :password, NOW())");
     $stmt->bindParam(':email', $email, PDO::PARAM_STR);
     $stmt->bindParam(':password', $password_hash, PDO::PARAM_STR);
     

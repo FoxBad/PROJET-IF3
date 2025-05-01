@@ -1,0 +1,80 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://cdn.futura-sciences.com/sources/images/cours%20trading.jpeg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.auth-container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px 30px;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    margin: auto;
+    text-align: center;
+    overflow: hidden;
+}
+
+.auth-container {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+.auth-container h1 {
+    background: linear-gradient(135deg, #3498db, #2ecc71);
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.auth-container p,
+.auth-container h2,
+.auth-container a {
+    color: white;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.auth-container a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.auth-btn {
+    padding: 0.8rem 2rem;
+    background-color: transparent;
+    color: #3498db;
+    text-decoration: none;
+    border-radius: 50px;
+    transition: all 0.4s ease;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border: 2px solid #3498db;
+    cursor: pointer;
+    font-size: 1rem;
+    box-shadow: none;
+    display: inline-block;
+}
+
+.auth-btn {
+    background: rgba(255, 255, 255, 0.9);
+    color: #2c3e50;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.auth-btn {
+    color: black !important;
+}

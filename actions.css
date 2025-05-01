@@ -1,4 +1,9 @@
-
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+}
 
 /* Styles pour le conteneur principal */
 .stocks-container {
@@ -129,30 +134,5 @@
 
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .stocks-container {
-        padding: 15px;
-        width: 95%;
-    }
-    
-    .stocks-table th, 
-    .stocks-table td {
-        padding: 8px 10px;
-        font-size: 14px;
-    }
-    
-    .quantity-input {
-        width: 60px;
-    }
-}
 
-/* Graphique (optionnel) */
-.chart-container {
-    height: 300px;
-    margin-top: 30px;
-    background: #f9f9f9;
-    border-radius: 8px;
-    padding: 15px;
-}
 

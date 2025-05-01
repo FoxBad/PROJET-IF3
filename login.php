@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="auth-container">
-        <h1>Bienvenue</h1>
+        <h1>Virtual Trader</h1>
         <h2>Connexion</h2>
 
 
@@ -16,13 +16,16 @@
             <div class="input-group">
                 <label for="email">Adresse email</label>
                 <i class="fas fa-envelope input-icon"></i>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email" name="email" required 
+                       value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
+                       placeholder="exemple@email.com">
             </div>
 
             <div class="input-group">
                 <label for="password">Mot de passe</label>
                 <i class="fas fa-lock input-icon"></i>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="password" required
+                       placeholder="••••••••" minlength="8">
             </div>
 
             <input type="submit" value="Se connecter">

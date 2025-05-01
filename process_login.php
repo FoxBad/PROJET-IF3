@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $db_password);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         
-        $stmt = $conn->prepare("SELECT id, password FROM users WHERE email = :email");
+        $stmt = $conn->prepare("SELECT id, password FROM user WHERE email = :email");
         $stmt->bindParam(':email', $email);
         $stmt->execute();
         

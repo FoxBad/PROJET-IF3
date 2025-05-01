@@ -5,16 +5,7 @@
     <title>Inscription</title>
     <link rel="stylesheet" href="theo_css.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        /* Styles spécifiques à la page register */
-        .register-container {
-            animation: fadeInUp 0.6s ease-out;
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+
 </head>
 <body>
     <div class="auth-container register-container">
@@ -50,13 +41,12 @@
                 <i class="fas fa-lock input-icon"></i>
                 <input type="password" id="password" name="password" required
                        placeholder="••••••••" minlength="8">
-                <small class="password-hint">Minimum 8 caractères</small>
             </div>
 
             <input type="submit" value="S'inscrire gratuitement" class="register-submit">
         </form>
 
-        <p class="auth-footer">Déjà membre ? <a href="login.php">Connectez-vous ici</a></p>
+        <p>Déjà membre ? <a href="login.php">Connectez-vous ici</a></p>
     </div>
 </body>
 </html>
