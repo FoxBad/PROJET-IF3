@@ -37,7 +37,7 @@ try {
     <title>Tableau de Bord | Virtual Trader</title>
     <script src="https://kit.fontawesome.com/0f2e19a0b0.js" crossorigin="anonymous"></script>
 
-    <link rel="stylesheet" href="theo_css.css">
+    <link rel="stylesheet" href="style.css">
     <style>
 
         .dashboard-container {
