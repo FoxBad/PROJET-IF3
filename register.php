@@ -5,7 +5,6 @@
     <title>Inscription</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
 </head>
 <body>
     <div class="auth-container register-container">
@@ -50,3 +49,7 @@
     </div>
 </body>
 </html>
+
+<!-- Ce fichier gère l'interface d'inscription des utilisateurs. -->
+<!-- Il inclut un formulaire pour saisir l'email et le mot de passe. -->
+<!-- Les erreurs d'inscription sont affichées dynamiquement en fonction des paramètres GET. -->

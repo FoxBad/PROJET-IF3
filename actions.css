@@ -5,7 +5,27 @@ body {
     padding: 20px;
 }
 
-/* Styles pour le conteneur principal */
+.dashboard-link {
+    margin-bottom: 20px;
+    text-align: right;
+}
+
+.dashboard-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.dashboard-btn:hover {
+    background-color: #2980b9;
+}
+
 .stocks-container {
     background: white;
     padding: 30px;
@@ -104,7 +124,7 @@ body {
     flex-wrap: nowrap;
 }
 
-.buy-btn {
+.act-btn {
     background-color: #27ae60;
     color: white;
     border: none;
@@ -113,11 +133,6 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     font-size: 14px;
-}
-
-.buy-btn:hover {
-    background-color: #219955;
-    transform: translateY(-1px); /* Effet de profondeur au survol */
 }
 
 .quantity-input {
@@ -133,6 +148,30 @@ body {
     text-decoration: none;
 
 }
+
+.buy-btn {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+
+.sell-btn{
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
 
 
 

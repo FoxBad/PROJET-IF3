@@ -11,7 +11,6 @@
         <h1>Virtual Trader</h1>
         <h2>Connexion</h2>
 
-
         <form action="process_login.php" method="POST">
             <div class="input-group">
                 <label for="email">Adresse email</label>
@@ -35,3 +34,6 @@
     </div>
 </body>
 </html>
+
+<!-- Ce fichier gère l'interface de connexion des utilisateurs. -->
+<!-- Il inclut un formulaire pour saisir l'email et le mot de passe. -->

@@ -1,4 +1,3 @@
-
 CREATE TABLE user (
     id INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
@@ -17,6 +16,13 @@ CREATE TABLE action (
     dividende DECIMAL(15,2)
 );
 
+INSERT INTO action (valeur, nom, description, date_dividende, dividende) VALUES
+(175.50, 'Apple Inc.', 'Entreprise technologique', '2025-05-10', 1.50),
+(135.25, 'Google Inc.', 'Entreprise technologique', '2025-05-15', 1.20),
+(310.80, 'Microsoft Corp.', 'Entreprise technologique', '2025-05-20', 2.00),
+(145.75, 'Amazon Inc.', 'Entreprise de commerce électronique', '2025-05-25', 1.80),
+(180.30, 'Tesla Inc.', 'Entreprise automobile', '2025-05-30', 2.50);
+
 CREATE TABLE history_price (
     id_action INT,
     date DATE,
@@ -24,6 +30,13 @@ CREATE TABLE history_price (
     PRIMARY KEY (id_action, date),
     FOREIGN KEY (id_action) REFERENCES action(id)
 );
+
+INSERT INTO history_price (id_action, date, prix) VALUES
+(1, '2025-05-04', 175.50),
+(2, '2025-05-04', 135.25),
+(3, '2025-05-04', 310.80),
+(4, '2025-05-04', 145.75),
+(5, '2025-05-04', 180.30);
 
 CREATE TABLE transaction (
     id_user INT,
