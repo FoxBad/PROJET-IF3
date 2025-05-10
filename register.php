@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Inscription</title>
+    <script src="https://kit.fontawesome.com/0f2e19a0b0.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
     <div class="auth-container register-container">
@@ -13,7 +13,7 @@
 
         <?php if (isset($_GET['error'])): ?>
             <div class="error-message">
-                <i class="fas fa-exclamation-circle"></i>
+                <i class="fa-solid fa-circle-exclamation input-icon"></i>
                 <?php
                 $errors = [
                     'invalid_email' => 'Veuillez entrer une adresse email valide',
@@ -29,7 +29,7 @@
         <form action="process_register.php" method="POST" novalidate>
             <div class="input-group">
                 <label for="email">Adresse email</label>
-                <i class="fas fa-envelope input-icon"></i>
+                <i class="fa-solid fa-envelope input-icon"></i>
                 <input type="email" id="email" name="email" required 
                        value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
                        placeholder="exemple@email.com">
@@ -37,7 +37,7 @@
 
             <div class="input-group">
                 <label for="password">Mot de passe</label>
-                <i class="fas fa-lock input-icon"></i>
+                <i class="fa-solid fa-lock input-icon"></i>
                 <input type="password" id="password" name="password" required
                        placeholder="••••••••" minlength="8">
             </div>

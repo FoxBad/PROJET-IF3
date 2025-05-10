@@ -28,6 +28,68 @@ try {
 } catch(PDOException $e) {
     error_log("Dashboard Error: ".$e->getMessage());
 }
+
+// Ajout des données du portefeuille, de l'argent et des transactions
+$portfolio_value = 0.00;
+$cash_available = 0.00;
+$recent_transactions = [];
+
+try {
+    // Récupération de l'argent disponible
+    $stmt = $conn->prepare("SELECT total_money FROM user WHERE id = :id LIMIT 1");
+    $stmt->bindParam(':id', $_SESSION['user_id'], PDO::PARAM_INT);
+    $stmt->execute();
+    $cash_available = $stmt->fetchColumn();
+
+    // Calcul de la valeur totale du portefeuille
+    $stmt = $conn->prepare(
+        "SELECT p.nombre_action, a.valeur, a.nom 
+         FROM portefeuille p 
+         JOIN action a ON p.id_action = a.id 
+         WHERE p.id_user = :id"
+    );
+    $stmt->bindParam(':id', $_SESSION['user_id'], PDO::PARAM_INT);
+    $stmt->execute();
+    $portfolio = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($portfolio as $item) {
+        $portfolio_value += $item['nombre_action'] * $item['valeur'];
+    }
+
+    // Récupération des dernières transactions
+    $stmt = $conn->prepare(
+        "SELECT t.date, t.nombre_action, t.prix_act, t.type, a.nom 
+         FROM transaction t 
+         JOIN action a ON t.id_action = a.id 
+         WHERE t.id_user = :id 
+         ORDER BY t.date DESC 
+         LIMIT 5"
+    );
+    $stmt->bindParam(':id', $_SESSION['user_id'], PDO::PARAM_INT);
+    $stmt->execute();
+    $recent_transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+} catch (PDOException $e) {
+    error_log("Dashboard Data Error: " . $e->getMessage());
+}
+
+// Ajout de la récupération du classement des joueurs
+$leaderboard = [];
+try {
+    $stmt = $conn->prepare(
+        "SELECT u.email, 
+                (COALESCE(SUM(p.nombre_action * a.valeur), 0) + u.total_money) AS total_value
+         FROM user u
+         LEFT JOIN portefeuille p ON u.id = p.id_user
+         LEFT JOIN action a ON p.id_action = a.id
+         GROUP BY u.id
+         ORDER BY total_value DESC"
+    );
+    $stmt->execute();
+    $leaderboard = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    error_log("Leaderboard Error: " . $e->getMessage());
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -36,45 +98,11 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tableau de Bord | Virtual Trader</title>
     <script src="https://kit.fontawesome.com/0f2e19a0b0.js" crossorigin="anonymous"></script>
-
-    <link rel="stylesheet" href="style.css">
-    <style>
-
-        .dashboard-container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 2rem;
-        }
-        .welcome-banner {
-            background: linear-gradient(135deg, #3498db, #2ecc71);
-            color: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            margin-bottom: 2rem;
-            animation: fadeIn 0.6s;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-        .stat-card {
-            background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            transition: transform 0.3s;
-        }
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-    </style>
+    <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
     <div class="dashboard-container">
         <header class="dashboard-header">
-            <h1>Virtual Trader</h1>
             <nav class="dashboard-nav">
                 <a href="actions.php"><i class="fa-solid fa-chart-line"></i> Actions</a>
                 <a href="logout.php"><i class="fa-solid fa-right-from-bracket"></i> Déconnexion</a>
@@ -98,17 +126,63 @@ try {
                 <h2>Votre activité</h2>
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <h3><i class="fa-solid fa-wallet"></i> Portefeuille</h3>
-                        <p>0.00 €</p>
+                        <h3><i class="fa-solid fa-wallet"></i> Portefeuille d'action</h3>
+                        <?php if (empty($portfolio)): ?>
+                            <p>Vous ne possédez aucune action.</p>
+                        <?php else: ?>
+                            <ul>
+                                <?php foreach ($portfolio as $item): ?>
+                                    <li>
+                                        <?= htmlspecialchars($item['nombre_action']) ?> x <?= htmlspecialchars($item['nom']) ?> 
+                                        à <?= number_format($item['valeur'], 2, ',', ' ') ?> € chacun
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                            <p><strong>Total :</strong> <?= number_format($portfolio_value, 2, ',', ' ') ?> €</p>
+                        <?php endif; ?>
                     </div>
                     <div class="stat-card">
-                        <h3><i class="fa-solid fa-chart-simple"></i> Performance</h3>
-                        <p>+0%</p>
+                        <h3><i class="fa-solid fa-money-bill"></i> Argent possédé</h3>
+                        <p><?= number_format($cash_available, 2, ',', ' ') ?> €</p>
                     </div>
                     <div class="stat-card">
-                        <h3><i class="fa-solid fa-money-bill-transfer"></i> Transactions</h3>
-                        <p>Aucune</p>
+                        <h3><i class="fa-solid fa-money-bill-transfer"></i> Transactions récentes</h3>
+                        <?php if (empty($recent_transactions)): ?>
+                            <p>Aucune transaction récente</p>
+                        <?php else: ?>
+                            <ul>
+                                <?php foreach ($recent_transactions as $transaction): ?>
+                                    <li>
+                                        <?= htmlspecialchars($transaction['date']) ?> : 
+                                        <?= htmlspecialchars($transaction['type']) ?> 
+                                        <?= htmlspecialchars($transaction['nombre_action']) ?> 
+                                        actions de <?= htmlspecialchars($transaction['nom']) ?> 
+                                        à <?= number_format($transaction['prix_act'], 2, ',', ' ') ?> €
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php endif; ?>
                     </div>
+                </div>
+            </section>
+
+            <!-- Ajout de la section pour afficher le classement des joueurs -->
+            <section class="dashboard-content">
+                <h2>Classement des joueurs</h2>
+                <div class="stat-card">
+                    <h3><i class="fa-solid fa-trophy"></i> Top joueurs</h3>
+                    <?php if (empty($leaderboard)): ?>
+                        <p>Aucun joueur dans le classement.</p>
+                    <?php else: ?>
+                        <ol>
+                            <?php foreach ($leaderboard as $player): ?>
+                                <li>
+                                    <?= htmlspecialchars($player['email']) ?> : 
+                                    <?= number_format($player['total_value'], 2, ',', ' ') ?> €
+                                </li>
+                            <?php endforeach; ?>
+                        </ol>
+                    <?php endif; ?>
                 </div>
             </section>
         </main>
