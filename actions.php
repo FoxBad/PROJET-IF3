@@ -19,13 +19,9 @@ try {
     $total_money = $stmt->fetchColumn();
 
     $stmt = $conn->prepare(
-        "SELECT a.id, a.nom, a.description, h.prix, 
-                (h.prix - LAG(h.prix) OVER (PARTITION BY h.id_action ORDER BY h.date)) / LAG(h.prix) OVER (PARTITION BY h.id_action ORDER BY h.date) * 100 AS variation,
-                COALESCE(p.nombre_action, 0) AS nombre_action
+        "SELECT a.id, a.nom, a.description, a.valeur AS prix, a.variation, COALESCE(p.nombre_action, 0) AS nombre_action
          FROM action a
-         JOIN history_price h ON a.id = h.id_action
-         LEFT JOIN portefeuille p ON a.id = p.id_action AND p.id_user = :user_id
-         WHERE h.date = (SELECT MAX(date) FROM history_price)"
+         LEFT JOIN portefeuille p ON a.id = p.id_action AND p.id_user = :user_id"
     );
     $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->execute();

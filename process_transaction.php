@@ -28,7 +28,7 @@ try {
 
     $conn->beginTransaction();
 
-    $stmt = $conn->prepare("SELECT prix FROM history_price WHERE id_action = :action_id ORDER BY date DESC LIMIT 1");
+    $stmt = $conn->prepare("SELECT valeur AS prix FROM action WHERE id = :action_id");
     $stmt->bindParam(':action_id', $action_id, PDO::PARAM_INT);
     $stmt->execute();
     $price = $stmt->fetchColumn();
