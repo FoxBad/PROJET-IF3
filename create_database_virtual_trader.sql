@@ -62,3 +62,11 @@ CREATE TABLE date (
     id INT AUTO_INCREMENT PRIMARY KEY,
     actual_date DATE
 );
+
+CREATE TABLE follow (
+    follower_id INT,
+    followed_id INT,
+    PRIMARY KEY (follower_id, followed_id),
+    FOREIGN KEY (follower_id) REFERENCES user(id),
+    FOREIGN KEY (followed_id) REFERENCES user(id)
+);

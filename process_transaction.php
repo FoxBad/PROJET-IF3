@@ -37,6 +37,15 @@ try {
         throw new Exception("Action introuvable.");
     }
 
+    // Récupérer la date actuelle du jeu
+    $stmt = $conn->prepare("SELECT actual_date FROM date ORDER BY id DESC LIMIT 1");
+    $stmt->execute();
+    $game_date = $stmt->fetchColumn();
+
+    if (!$game_date) {
+        throw new Exception("Date actuelle du jeu introuvable.");
+    }
+
     if ($type === 'buy') {
         $stmt = $conn->prepare("SELECT total_money FROM user WHERE id = :user_id");
         $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
@@ -53,9 +62,10 @@ try {
         $stmt->bindParam(':user_id', $user_id);
         $stmt->execute();
 
-        $stmt = $conn->prepare("INSERT INTO portefeuille (id_user, id_action, date, nombre_action) VALUES (:user_id, :action_id, NOW(), :quantity) ON DUPLICATE KEY UPDATE nombre_action = nombre_action + :quantity");
+        $stmt = $conn->prepare("INSERT INTO portefeuille (id_user, id_action, date, nombre_action) VALUES (:user_id, :action_id, :game_date, :quantity) ON DUPLICATE KEY UPDATE nombre_action = nombre_action + :quantity");
         $stmt->bindParam(':user_id', $user_id);
         $stmt->bindParam(':action_id', $action_id);
+        $stmt->bindParam(':game_date', $game_date);
         $stmt->bindParam(':quantity', $quantity);
         $stmt->execute();
 
@@ -83,9 +93,10 @@ try {
         $stmt->execute();
     }
 
-    $stmt = $conn->prepare("INSERT INTO transaction (id_user, id_action, date, nombre_action, prix_act, type) VALUES (:user_id, :action_id, NOW(), :quantity, :price, :type)");
+    $stmt = $conn->prepare("INSERT INTO transaction (id_user, id_action, date, nombre_action, prix_act, type) VALUES (:user_id, :action_id, :game_date, :quantity, :price, :type)");
     $stmt->bindParam(':user_id', $user_id);
     $stmt->bindParam(':action_id', $action_id);
+    $stmt->bindParam(':game_date', $game_date);
     $stmt->bindParam(':quantity', $quantity);
     $stmt->bindParam(':price', $price);
     $stmt->bindParam(':type', $type);

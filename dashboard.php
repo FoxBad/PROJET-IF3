@@ -90,6 +90,45 @@ try {
 } catch (PDOException $e) {
     error_log("Leaderboard Error: " . $e->getMessage());
 }
+
+// Récupération des joueurs suivis et leurs deux dernières transactions
+$followed_players = [];
+try {
+    $stmt = $conn->prepare(
+        "SELECT f.followed_id, u.email, t.date, t.nombre_action, t.prix_act, t.type, a.nom
+         FROM follow f
+         JOIN user u ON f.followed_id = u.id
+         LEFT JOIN transaction t ON t.id_user = u.id
+         LEFT JOIN action a ON t.id_action = a.id
+         WHERE f.follower_id = :user_id
+         ORDER BY t.date DESC"
+    );
+    $stmt->bindParam(':user_id', $_SESSION['user_id'], PDO::PARAM_INT);
+    $stmt->execute();
+    $raw_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Regrouper les transactions par joueur
+    foreach ($raw_data as $row) {
+        $followed_id = $row['followed_id'];
+        if (!isset($followed_players[$followed_id])) {
+            $followed_players[$followed_id] = [
+                'email' => $row['email'],
+                'transactions' => []
+            ];
+        }
+        if (count($followed_players[$followed_id]['transactions']) < 2) {
+            $followed_players[$followed_id]['transactions'][] = [
+                'date' => $row['date'],
+                'nombre_action' => $row['nombre_action'],
+                'prix_act' => $row['prix_act'],
+                'type' => $row['type'],
+                'nom' => $row['nom']
+            ];
+        }
+    }
+} catch (PDOException $e) {
+    error_log("Followed Players Error: " . $e->getMessage());
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -185,7 +224,93 @@ try {
                     <?php endif; ?>
                 </div>
             </section>
+
+            <!-- Ajout de la section pour rechercher et suivre des joueurs -->
+            <section class="dashboard-content">
+                <div class="follow-section">
+                    <h2>Rechercher un joueur</h2>
+                    <form id="search-player-form">
+                        <input type="text" id="search-player-input" placeholder="Entrez un email...">
+                        <button type="submit">Rechercher</button>
+                    </form>
+                    <ul id="search-results"></ul>
+                </div>
+            </section>
+
+            <!-- Ajout de la section pour afficher les joueurs suivis et leurs deux dernières transactions -->
+            <section class="dashboard-content">
+                <h2>Joueurs suivis</h2>
+                <div class="stat-card">
+                    <h3><i class="fa-solid fa-user-friends"></i> Joueurs suivis</h3>
+                    <?php if (empty($followed_players)): ?>
+                        <p>Vous ne suivez aucun joueur.</p>
+                    <?php else: ?>
+                        <ul>
+                            <?php foreach ($followed_players as $player): ?>
+                                <li>
+                                    <strong><?= htmlspecialchars($player['email']) ?></strong>
+                                    <ul>
+                                        <?php if (empty($player['transactions'])): ?>
+                                            <li>Aucune transaction récente</li>
+                                        <?php else: ?>
+                                            <?php foreach ($player['transactions'] as $transaction): ?>
+                                                <li>
+                                                    <?= htmlspecialchars($transaction['date']) ?> :
+                                                    <?= htmlspecialchars($transaction['type']) ?>
+                                                    <?= htmlspecialchars($transaction['nombre_action']) ?> actions de
+                                                    <?= htmlspecialchars($transaction['nom']) ?> à
+                                                    <?= number_format($transaction['prix_act'], 2, ',', ' ') ?> €
+                                                </li>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </ul>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                </div>
+            </section>
         </main>
     </div>
+
+    <script>
+        document.getElementById('search-player-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const query = document.getElementById('search-player-input').value;
+
+            fetch(`follow_player.php?search=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const resultsContainer = document.getElementById('search-results');
+                    resultsContainer.innerHTML = '';
+
+                    if (data.error) {
+                        resultsContainer.innerHTML = `<li>${data.error}</li>`;
+                    } else {
+                        data.forEach(user => {
+                            const li = document.createElement('li');
+                            li.textContent = user.email;
+
+                            const followButton = document.createElement('button');
+                            followButton.textContent = 'Suivre';
+                            followButton.addEventListener('click', () => {
+                                const formData = new URLSearchParams();
+                                formData.append('action', 'follow');
+                                formData.append('target_user_id', user.id);
+
+                                fetch('follow_player.php', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                    body: formData.toString()
+                                }).then(() => alert('Joueur suivi !'));
+                            });
+
+                            li.appendChild(followButton);
+                            resultsContainer.appendChild(li);
+                        });
+                    }
+                });
+        });
+    </script>
 </body>
 </html>
