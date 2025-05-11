@@ -2,6 +2,7 @@
 require_once 'db_config.php';
 
 try {
+    // Connexion à la base de données
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $db_password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -11,7 +12,7 @@ try {
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$row) {
-        // Aucune date : insérer la date du jour
+        // Aucune date trouvée : insérer la date du jour
         $today = date('Y-m-d');
         echo "Aucune date trouvée. Insertion de la date du jour : $today\n";
         $stmt = $conn->prepare("INSERT INTO date (actual_date) VALUES (:today)");
@@ -34,7 +35,7 @@ try {
 
     // Traiter les dividendes pour les joueurs
     echo "Traitement des dividendes pour les joueurs...\n";
-    // Modifier la requête pour vérifier si le mois de la date de dividende correspond au mois actuel
+    // Récupérer les dividendes pour le mois actuel
     $stmt = $conn->prepare(
         "SELECT p.id_user, p.id_action, a.dividende, a.date_dividende, p.nombre_action
          FROM portefeuille p
@@ -46,6 +47,7 @@ try {
     $dividends = $stmt->fetchAll(PDO::FETCH_ASSOC);
     echo "Dividendes récupérés : " . json_encode($dividends) . "\n";
 
+    // Mettre à jour les comptes des utilisateurs avec les dividendes
     foreach ($dividends as $dividend) {
         $total_dividend = $dividend['dividende'] * $dividend['nombre_action'];
         echo "Mise à jour de l'utilisateur {$dividend['id_user']} avec un dividende de : $total_dividend\n";
@@ -62,6 +64,7 @@ try {
     $history_count = $stmt->fetchColumn();
 
     if ($history_count == 0) {
+        // Initialiser les prix historiques pour la date actuelle
         echo "Initialisation des prix historiques pour la date actuelle...\n";
         $stmt = $conn->query("SELECT id, valeur FROM action");
         $actions = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -85,11 +88,13 @@ try {
     echo "Actions récupérées : " . json_encode($actions) . "\n";
 
     foreach ($actions as $action) {
+        // Calculer une nouvelle variation aléatoire
         $random_variation = rand(-3, 3);
         $new_variation = $action['variation'] + $random_variation;
         $new_variation = max(-10, min(10, $new_variation));
         echo "Action ID {$action['id']} - Nouvelle variation : $new_variation\n";
 
+        // Calculer le nouveau prix basé sur la variation
         $new_price = $action['prix'] * (1 + $new_variation / 100);
         $new_price = max(1, $new_price);
         echo "Action ID {$action['id']} - Nouveau prix : $new_price\n";
@@ -100,12 +105,12 @@ try {
         $stmt->bindParam(':new_price', $new_price);
         $stmt->bindParam(':id_action', $action['id']);
         $stmt->execute();
-
     }
 
     echo "Mise à jour du jeu effectuée avec succès.\n";
 
 } catch (PDOException $e) {
+    // Gérer les erreurs de connexion ou d'exécution
     error_log("Erreur lors de la mise à jour du jeu : " . $e->getMessage());
     echo "Une erreur s'est produite lors de la mise à jour du jeu.";
 }

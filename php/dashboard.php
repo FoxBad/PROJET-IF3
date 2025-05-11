@@ -1,8 +1,11 @@
 <?php
+// Démarrage de la session
 session_start();
+
+// Inclusion du fichier de configuration de la base de données
 require_once 'db_config.php';
 
-// Redirection si non connecté
+// Redirection vers la page de connexion si l'utilisateur n'est pas connecté
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
@@ -15,33 +18,35 @@ if (isset($_SESSION['new_user'])) {
     unset($_SESSION['new_user']);
 }
 
-// Récupération des infos utilisateur
+// Récupération des informations de l'utilisateur connecté
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $db_password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    
+
+    // Récupération de la date de création du compte utilisateur
     $stmt = $conn->prepare("SELECT created_at FROM user WHERE id = :id LIMIT 1");
     $stmt->bindParam(':id', $_SESSION['user_id'], PDO::PARAM_INT);
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+
 } catch(PDOException $e) {
-    error_log("Dashboard Error: ".$e->getMessage());
+    // Enregistrement des erreurs dans les logs
+    error_log("Dashboard Error: " . $e->getMessage());
 }
 
-// Ajout des données du portefeuille, de l'argent et des transactions
+// Initialisation des variables pour le portefeuille, l'argent disponible et les transactions récentes
 $portfolio_value = 0.00;
 $cash_available = 0.00;
 $recent_transactions = [];
 
 try {
-    // Récupération de l'argent disponible
+    // Récupération de l'argent disponible pour l'utilisateur
     $stmt = $conn->prepare("SELECT total_money FROM user WHERE id = :id LIMIT 1");
     $stmt->bindParam(':id', $_SESSION['user_id'], PDO::PARAM_INT);
     $stmt->execute();
     $cash_available = $stmt->fetchColumn();
 
-    // Calcul de la valeur totale du portefeuille
+    // Calcul de la valeur totale du portefeuille de l'utilisateur
     $stmt = $conn->prepare(
         "SELECT p.nombre_action, a.valeur, a.nom 
          FROM portefeuille p 
@@ -56,7 +61,7 @@ try {
         $portfolio_value += $item['nombre_action'] * $item['valeur'];
     }
 
-    // Récupération des dernières transactions
+    // Récupération des 5 dernières transactions de l'utilisateur
     $stmt = $conn->prepare(
         "SELECT t.date, t.nombre_action, t.prix_act, t.type, a.nom 
          FROM transaction t 
@@ -70,10 +75,11 @@ try {
     $recent_transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 } catch (PDOException $e) {
+    // Enregistrement des erreurs dans les logs
     error_log("Dashboard Data Error: " . $e->getMessage());
 }
 
-// Ajout de la récupération du classement des joueurs
+// Récupération du classement des joueurs
 $leaderboard = [];
 try {
     $stmt = $conn->prepare(
@@ -88,10 +94,11 @@ try {
     $stmt->execute();
     $leaderboard = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
+    // Enregistrement des erreurs dans les logs
     error_log("Leaderboard Error: " . $e->getMessage());
 }
 
-// Récupération des joueurs suivis et leurs deux dernières transactions
+// Récupération des joueurs suivis et de leurs deux dernières transactions
 $followed_players = [];
 try {
     $stmt = $conn->prepare(
@@ -107,7 +114,7 @@ try {
     $stmt->execute();
     $raw_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Regrouper les transactions par joueur
+    // Organisation des transactions par joueur suivi
     foreach ($raw_data as $row) {
         $followed_id = $row['followed_id'];
         if (!isset($followed_players[$followed_id])) {
@@ -127,9 +134,12 @@ try {
         }
     }
 } catch (PDOException $e) {
+    // Enregistrement des erreurs dans les logs
     error_log("Followed Players Error: " . $e->getMessage());
 }
 ?>
+
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -137,7 +147,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tableau de Bord | Virtual Trader</title>
     <script src="https://kit.fontawesome.com/0f2e19a0b0.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="../style/dashboard.css">
 </head>
 <body>
     <div class="dashboard-container">
@@ -272,6 +282,8 @@ try {
             </section>
         </main>
     </div>
+
+    
 
     <script>
         document.getElementById('search-player-form').addEventListener('submit', function(e) {

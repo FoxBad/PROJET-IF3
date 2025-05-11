@@ -1,0 +1,185 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    color: #333;
+    background-color: #f5f5f5;
+}
+
+.dashboard-link {
+    margin-bottom: 20px;
+    text-align: right;
+}
+
+.dashboard-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+.dashboard-btn:hover {
+    background-color: #2ecc71;
+}
+
+.stocks-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    width: 90%;
+    max-width: 1200px;
+    margin: 2rem auto;
+    overflow-x: auto;
+}
+
+.stocks-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 15px;
+}
+
+.stocks-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.stocks-filters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.stocks-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.stocks-table th {
+    background-color: #f5f5f5;
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: bold;
+    border-bottom: 2px solid #ddd;
+    position: sticky;
+    top: 0;
+}
+
+.stocks-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+.stocks-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.stock-symbol {
+    font-weight: bold;
+    color: #2c3e50;
+    white-space: nowrap;
+}
+
+.stock-name {
+    color: #555;
+}
+
+.stock-price {
+    font-weight: bold;
+    color: #27ae60;
+    white-space: nowrap;
+}
+
+.stock-change {
+    font-weight: bold;
+}
+
+.stock-change.negative {
+    color: #e74c3c;
+}
+
+.stock-change.positive {
+    color: #27ae60;
+}
+
+.stock-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: nowrap;
+}
+
+.act-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+.act-btn:hover {
+    background-color: #2ecc71;
+}
+
+.quantity-input {
+    width: 70px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.quantity-input a {
+    text-decoration: none;
+}
+
+.buy-btn, .sell-btn {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-size: 14px;
+}
+
+.buy-btn:hover, .sell-btn:hover {
+    transform: scale(1.0);
+}
+
+.chart-container {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.chart-selector {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+
+
+

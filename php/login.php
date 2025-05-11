@@ -1,10 +1,12 @@
+<!-- Ce fichier gère l'interface de connexion des utilisateurs. -->
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>Connexion</title>
     <script src="https://kit.fontawesome.com/0f2e19a0b0.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style/style.css">
 
 </head>
 <body>
@@ -36,5 +38,3 @@
 </body>
 </html>
 
-<!-- Ce fichier gère l'interface de connexion des utilisateurs. -->
-<!-- Il inclut un formulaire pour saisir l'email et le mot de passe. -->
